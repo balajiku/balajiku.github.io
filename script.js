@@ -170,12 +170,98 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial dojo selection
   selectDojo(DOJOS[0]);
 
+  // Events data - Edit this section to manage events
+  // Keep events-data.json in sync for reference
+  const EVENTS_DATA = {
+    events: [
+      {
+        id: "shimoga-2025",
+        title: "6th Shimoga International Karate Championships -2025",
+        schedule: "on-21 august 2025",
+        enrollLink: "tel:+919611693004",
+        active: true
+      },
+      {
+        id: "champions-cup-2026",
+        title: "5th champions cup-2026",
+        schedule: "on-11 january 2026",
+        enrollLink: "tel:+919611693004",
+        active: true
+      },
+      {
+        id: "udupi-2025",
+        title: "2nd udupi international karate championship-2026",
+        schedule: "on 19-24 december-2026",
+        enrollLink: "tel:+919611693004",
+        active: true
+      }
+    ],
+    noEventsMessage: "No upcoming events at the moment. Check back soon!"
+  };
+
+  // Load and display events
+  function loadEvents() {
+    displayEvents(EVENTS_DATA);
+  }
+  
+  function displayEvents(data) {
+    const container = document.getElementById('events-container');
+    const activeEvents = data.events.filter(event => event.active);
+    
+    if (activeEvents.length === 0) {
+      container.innerHTML = `<p class="muted" style="grid-column: 1 / -1; text-align: center;">${data.noEventsMessage}</p>`;
+    } else {
+      container.innerHTML = activeEvents.map((event) => `
+        <article class="card" aria-labelledby="event-${event.id}">
+          <h4 id="event-${event.id}">${event.title}</h4>
+          <p><strong>Schedule:</strong> ${event.schedule}</p>
+          <a class="btn" href="${event.enrollLink}">Enroll</a>
+        </article>
+      `).join('');
+    }
+  }
+  
+  // Load events on page load
+  loadEvents();
+
+  // Instructor modal functionality
+  const instructorCard = document.getElementById('instructorCard');
+  const instructorModal = document.getElementById('instructorModal');
+  const closeInstructor = document.getElementById('closeInstructor');
+
+  if (instructorCard && instructorModal && closeInstructor) {
+    // Open modal on card click
+    instructorCard.addEventListener('click', () => {
+      instructorModal.classList.add('active');
+    });
+
+    // Open modal on Enter key
+    instructorCard.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        instructorModal.classList.add('active');
+      }
+    });
+
+    // Close modal on close button click
+    closeInstructor.addEventListener('click', () => {
+      instructorModal.classList.remove('active');
+    });
+
+    // Close modal on background click
+    instructorModal.addEventListener('click', (e) => {
+      if (e.target === instructorModal) {
+        instructorModal.classList.remove('active');
+      }
+    });
+  }
+
   // Theme toggle functionality
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
   
   // Load saved theme from localStorage
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const savedTheme = localStorage.getItem('theme') || 'light';
   html.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
 
